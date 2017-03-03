@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification
+  xmlns="https://github.com/vqmod/vqmod"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://github.com/vqmod/vqmod https://raw.githubusercontent.com/vqmod/vqmod/master/vqmod.xsd">
+    <id>CPF no checkout</id>
+    <version>1.0.0</version>
+    <vqmver required="true">2.4.0</vqmver>
+    <author>Frete Rápido</author>
+    <file path="catalog/view/theme/default/template/checkout/register.tpl">
+        <operation>
+            <search trim="true"><![CDATA[
+              <span class="required">*</span> <?php echo $entry_telephone; ?><br />
+            ]]></search>
+            <add position="before"><![CDATA[
+              <span class="required">*</span> <?php echo $entry_cpf; ?><br />
+              <input type="text" name="cpf" value="" class="large-field" />
+              <br />
+              <br />
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/checkout/register.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->data['entry_email'] = $this->language->get('entry_email');
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->data['entry_cpf'] = $this->language->get('entry_cpf');
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if ($this->model_account_customer->getTotalCustomersByEmail($this->request->post['email'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if ((utf8_strlen($this->request->post['cpf']) != 11)) {
+                $json['error']['cpf'] = $this->language->get('error_cpf');
+              }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/language/english/checkout/checkout.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['entry_email']                    = 'E-Mail:';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['entry_cpf']                      = 'CPF:';
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['error_email']                    = 'E-Mail Address does not appear to be valid!';
+            ]]></search>
+            <add position="before"><![CDATA[
+              $_['error_cpf']                      = 'CPF não parece ser válido!';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/model/" name="account/customer.php,checkout/order.php">
+        <operation>
+            <search><![CDATA[
+              email = '" . $this->db->escape($data['email'])
+            ]]></search>
+            <add position="replace" trim="true"><![CDATA[
+              email = '" . $this->db->escape($data['email']) . "', cpf = '" . $this->db->escape($data['cpf'])
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/default/template/checkout/guest.tpl">
+        <operation>
+            <search trim="true"><![CDATA[
+              <span class="required">*</span> <?php echo $entry_telephone; ?><br />
+            ]]></search>
+            <add position="before"><![CDATA[
+              <span class="required">*</span> <?php echo $entry_cpf; ?><br />
+              <input type="text" name="cpf" value="" class="large-field" />
+              <br />
+              <br />
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/checkout/guest.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->data['entry_email'] = $this->language->get('entry_email');
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->data['entry_cpf'] = $this->language->get('entry_cpf');
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if ((utf8_strlen($this->request->post['cpf']) != 11)) {
+				$json['error']['cpf'] = $this->language->get('error_cpf');
+			  }
+          ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->session->data['guest']['email'] = $this->request->post['email'];
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->session->data['guest']['cpf'] = $this->request->post['cpf'];
+          ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->session->data['guest']['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->session->data['guest']['cpf'])) {
+                $this->data['cpf'] = $this->session->data['guest']['cpf'];
+              } else {
+                $this->data['cpf'] = '';
+              }
+          ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/checkout/confirm.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $data['email'] = $this->customer->getEmail();
+            ]]></search>
+            <add position="after"><![CDATA[
+              $data['cpf'] = $this->customer->getCpf();
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $data['email'] = $this->session->data['guest']['email'];
+            ]]></search>
+            <add position="after"><![CDATA[
+              $data['cpf'] = $this->session->data['guest']['cpf'];
+            ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/customer.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              private $email;
+            ]]></search>
+            <add position="after"><![CDATA[
+              private $cpf;
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->email = $customer_query->row['email'];
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->cpf = $customer_query->row['cpf'];
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->email = '';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->cpf = '';
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              public function getTelephone() {
+            ]]></search>
+            <add position="before"><![CDATA[
+              public function getCpf() {
+                return $this->cpf;
+              }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/language/english/account/register.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['entry_email']          = 'E-Mail:';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['entry_cpf']            = 'CPF:';
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['error_email']          = 'E-Mail Address does not appear to be valid!';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['error_cpf']            = 'CPF não parece ser válido!';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/account/register.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->data['entry_email'] = $this->language->get('entry_email');
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->data['entry_cpf'] = $this->language->get('entry_cpf');
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->error['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->error['cpf'])) {
+                $this->data['error_cpf'] = $this->error['cpf'];
+              } else {
+                $this->data['error_cpf'] = '';
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->request->post['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->request->post['cpf'])) {
+                $this->data['cpf'] = $this->request->post['cpf'];
+              } else {
+                $this->data['cpf'] = '';
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if ($this->model_account_customer->getTotalCustomersByEmail($this->request->post['email'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if ((utf8_strlen($this->request->post['cpf']) != 11)) {
+                $this->error['cpf'] = $this->language->get('error_cpf');
+              }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/default/template/account/" name="register.tpl,edit.tpl">
+        <operation>
+            <search trim="true"><![CDATA[
+              <span class="error"><?php echo $error_email; ?></span>
+            ]]></search>
+            <add position="after" offset="2"><![CDATA[
+              <tr>
+                <td><span class="required">*</span> <?php echo $entry_cpf; ?></td>
+                <td><input type="text" name="cpf" value="<?php echo $cpf; ?>" />
+                  <?php if ($error_cpf) { ?>
+                  <span class="error"><?php echo $error_cpf; ?></span>
+                  <?php } ?></td>
+              </tr>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/sale/" name="order_form.tpl,customer_form.tpl">
+        <operation>
+            <search trim="true"><![CDATA[
+              <span class="error"><?php echo $error_email; ?></span>
+            ]]></search>
+            <add position="after" offset="2"><![CDATA[
+              <tr>
+                <td><span class="required">*</span> <?php echo $entry_cpf; ?></td>
+                <td><input type="text" name="cpf" value="<?php echo $cpf; ?>" />
+                  <?php if ($error_cpf) { ?>
+                  <span class="error"><?php echo $error_cpf; ?></span>
+                  <?php } ?></td>
+              </tr>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/language/english/account/edit.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['entry_email']      = 'E-Mail:';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['entry_cpf']        = 'CPF:';
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['error_email']      = 'E-Mail Address does not appear to be valid!';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['error_cpf']        = 'CPF não parece ser válido!';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/account/edit.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->data['entry_email'] = $this->language->get('entry_email');
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->data['entry_cpf'] = $this->language->get('entry_cpf');
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->error['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->error['cpf'])) {
+                $this->data['error_cpf'] = $this->error['cpf'];
+              } else {
+                $this->data['error_cpf'] = '';
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->request->post['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->request->post['cpf'])) {
+                $this->data['cpf'] = $this->request->post['cpf'];
+              } elseif (isset($customer_info)) {
+                $this->data['cpf'] = $customer_info['cpf'];
+              } else {
+                $this->data['cpf'] = '';
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (($this->customer->getEmail() != $this->request->post['email']) && $this->model_account_customer->getTotalCustomersByEmail($this->request->post['email'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if ((utf8_strlen($this->request->post['cpf']) != 11)) {
+                $this->error['cpf'] = $this->language->get('error_cpf');
+              }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/controller/sale/customer.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->data['entry_email'] = $this->language->get('entry_email');
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->data['entry_cpf'] = $this->language->get('entry_cpf');
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->error['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->error['cpf'])) {
+                $this->data['error_cpf'] = $this->error['cpf'];
+              } else {
+                $this->data['error_cpf'] = '';
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->request->post['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->request->post['cpf'])) {
+                $this->data['cpf'] = $this->request->post['cpf'];
+              } elseif (!empty($customer_info)) {
+                $this->data['cpf'] = $customer_info['cpf'];
+              } else {
+                $this->data['cpf'] = '';
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $customer_info = $this->model_sale_customer->getCustomerByEmail($this->request->post['email']);
+            ]]></search>
+            <add position="before"><![CDATA[
+              if ((utf8_strlen($this->request->post['cpf']) != 11)) {
+                $this->error['cpf'] = $this->language->get('error_cpf');
+              }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/language/english/sale/customer.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['entry_email']           = 'E-Mail:';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['entry_cpf']             = 'CPF:';
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['error_email']           = 'E-Mail Address does not appear to be valid!';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['error_cpf']             = 'CPF não parece ser válido!';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/language/english/sale/order.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['text_email']                              = 'E-Mail:';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['text_cpf']                                = 'CPF:';
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['entry_email']                             = 'E-Mail:';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['entry_cpf']                               = 'CPF:';
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $_['error_email']                             = 'E-Mail Address does not appear to be valid!';
+            ]]></search>
+            <add position="after"><![CDATA[
+              $_['error_cpf']                               = 'CPF não parece ser válido!';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/model/sale/customer.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              email = '" . $this->db->escape($data['email'])
+            ]]></search>
+            <add position="replace" trim="true"><![CDATA[
+              email = '" . $this->db->escape($data['email']) . "', cpf = '" . $this->db->escape($data['cpf'])
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/controller/sale/order.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->data['entry_email'] = $this->language->get('entry_email');
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->data['entry_cpf'] = $this->language->get('entry_cpf');
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->error['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->error['cpf'])) {
+                $this->data['error_cpf'] = $this->error['cpf'];
+              } else {
+                $this->data['error_cpf'] = '';
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if (isset($this->request->post['telephone'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->request->post['cpf'])) {
+                $this->data['cpf'] = $this->request->post['cpf'];
+              } elseif (!empty($order_info)) {
+                $this->data['cpf'] = $order_info['cpf'];
+              } else {
+                $this->data['cpf'] = '';
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
+            ]]></search>
+            <add position="before"><![CDATA[
+              if ((utf8_strlen($this->request->post['cpf']) != 11)) {
+                $this->error['cpf'] = $this->language->get('error_cpf');
+              }
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->data['text_email'] = $this->language->get('text_email');
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->data['text_cpf'] = $this->language->get('text_cpf');
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              $this->data['total'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value']);
+            ]]></search>
+            <add position="after"><![CDATA[
+              $this->data['cpf'] = $order_info['cpf'];
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/sale/order_info.tpl">
+        <operation>
+            <search trim="true"><![CDATA[
+              <td><?php echo $email; ?></td>
+            ]]></search>
+            <add position="after" offset="1"><![CDATA[
+              <tr>
+                <td><?php echo $text_cpf; ?></td>
+                <td><?php echo $cpf; ?></td>
+              </tr>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/model/sale/order.php">
+        <operation>
+            <search trim="true"><![CDATA[
+              email = '" . $this->db->escape($data['email'])
+            ]]></search>
+            <add position="replace" trim="true"><![CDATA[
+              email = '" . $this->db->escape($data['email']) . "', cpf = '" . $this->db->escape($data['cpf'])
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true"><![CDATA[
+              'email'                   => $order_query->row['email'],
+            ]]></search>
+            <add position="after"><![CDATA[
+              'cpf'                     => $order_query->row['cpf'],
+            ]]></add>
+        </operation>
+    </file>
+</modification>
