@@ -17,7 +17,7 @@
             <img src="https://freterapido.com/imgs/frete_rapido.png" style="margin: auto" />
           </a>
           <div style="padding-top: 20px;">
-            Em caso de dúvidas, reporte de bugs ou sugestão de melhorias, acesse a <a href="https://github.com/freterapido/freterapido_magento" target="_blank"<name />documentação deste módulo no Github</a>.
+            Em caso de dúvidas, reporte de bugs ou sugestão de melhorias, acesse a <a href="https://github.com/freterapido/opencart_1.5.x_cpf_checkout" target="_blank"<name />documentação deste módulo no Github</a>.
             </br>
           </div>
         </div>
