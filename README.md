@@ -9,9 +9,15 @@ Versão do plugin: 1.0.0
 
 Compatibilidade com OpenCart: **1.5x**
 
-----------
+-------------
 
-###Instalação
+### IMPORTANTE
+A Frete Rápido não mantem e/ou oferece suporte para a integração com o **OpenCart**, apenas disponibilizamos um módulo de integração padrão que atente a maioria dos e-commerces que utilizam esta plataforma.
+
+Para qualquer modificação no módulo baseada no modelo de negócio do seu e-commerce, nós disponibilizamos aqui o código fonte do módulo integrado a [API do Frete Rápido][4] e aqui [neste link][3] você encontra a documentação de integrações e modificações do **OpenCart**.
+
+--------------
+### Instalação
 
 >**ATENÇÃO!** Recomendamos que seja feito backup da sua loja antes de realizar qualquer instalação. A instalação desse módulo é de inteira responsabilidade do lojista.
 
@@ -22,7 +28,7 @@ Compatibilidade com OpenCart: **1.5x**
 
 ----------
 
-###Contribuições
+### Contribuições
 Encontrou algum bug ou tem sugestões de melhorias no código? Sensacional! Não se acanhe, nos envie um *pull request* com a sua alteração e ajude este projeto a ficar ainda melhor.
 
 1. Faça um "Fork"
@@ -42,3 +48,5 @@ Powered by
 
 [1]: https://github.com/freterapido/opencart_1.5.x_cpf_checkout/archive/master.zip
 [2]: https://github.com/freterapido/opencart_1.5.x_cpf_checkout/blob/master/LICENSE
+[3]: http://docs.opencart.com/developer/module/
+[4]: https://www.freterapido.com/dev/
