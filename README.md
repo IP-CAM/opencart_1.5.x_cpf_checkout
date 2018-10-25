@@ -15,11 +15,14 @@ Compatibilidade com OpenCart: **1.5x**
 
 Este módulo é apenas um referencial de integração e cabe ao cliente a função de configurá-lo e adaptá-lo a sua respectiva loja, levando em conta as particularidades e conflitos que podem surgir durante o processo de integração.
 
-A Frete Rápido não mantem e/ou oferece suporte para a integração com o **OpenCart**, apenas disponibilizamos um módulo de integração padrão que atente a maioria dos e-commerces que utilizam esta plataforma.
+A Frete Rápido não mantem e/ou oferece suporte para a integração com o **OpenCart**, disponibilizamos o módulo padrão que atente a modalidade de envio simples.
 
-Para qualquer modificação no módulo baseada no modelo de negócio do seu e-commerce, nós disponibilizamos aqui o código fonte do módulo integrado a [API do Frete Rápido][4] e aqui [neste link][3] você encontra a documentação de integrações e modificações do **OpenCart**.
+**Este módulo não opera Dropshipphig!**
+
+Caso seja necessário adaptações deste módulo para atender a sua loja, é possível alterar o código fonte, desde que atenda a [API da Frete Rápido][4]. E [neste link][3] você encontra a documentação de orientações do **OpenCart**.
 
 A Frete Rápido não se responsabiliza por eventualidades advindas deste módulo.
+
 
 --------------
 ### Instalação
